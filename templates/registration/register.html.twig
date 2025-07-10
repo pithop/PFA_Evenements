@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <h1 class="h3 mb-3 fw-normal text-center">Créez votre compte</h1>
+
+                {{ form_errors(registrationForm) }}
+
+                {{ form_start(registrationForm, {'attr': {'class': 'row g-3'}}) }}
+                    <div class="col-md-6">
+                        {{ form_row(registrationForm.firstName, {'attr': {'placeholder': 'Votre prénom'}}) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form_row(registrationForm.lastName, {'attr': {'placeholder': 'Votre nom'}}) }}
+                    </div>
+                    <div class="col-12">
+                        {{ form_row(registrationForm.email, {'attr': {'placeholder': 'email@example.com'}}) }}
+                    </div>
+                    <div class="col-12">
+                        {{ form_row(registrationForm.plainPassword, {
+                            label: 'Mot de passe'
+                        }) }}
+                    </div>
+                    <div class="col-12">
+                         <div class="form-check">
+                            {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'form-check-input'}}) }}
+                            {{ form_label(registrationForm.agreeTerms, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-4">
+                        <button type="submit" class="w-100 btn btn-lg btn-success">
+                            <i class="bi bi-person-plus-fill"></i> S'inscrire
+                        </button>
+                    </div>
+                {{ form_end(registrationForm) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

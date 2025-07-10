@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ event.title }}{% endblock %}
+
+{% block body %}
+    {# Event Details Card #}
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h1 class="card-title">{{ event.title }}</h1>
+            <h6 class="card-subtitle mb-2 text-muted">
+                <i class="bi bi-calendar-event"></i> Du {{ event.startDate|date('d/m/Y H:i') }} au {{ event.endDate|date('d/m/Y H:i') }}
+            </h6>
+            <h6 class="card-subtitle mb-3 text-muted">
+                <i class="bi bi-geo-alt-fill"></i> {{ event.location }}
+            </h6>
+            <p class="card-text">{{ event.description|nl2br }}</p>
+        </div>
+    </div>
+
+    {# RSVP Card for Guests #}
+    {% set my_invitation = event.invitations|filter(i => app.user and i.guestEmail == app.user.email)|first %}
+    {% if my_invitation %}
+        <div class="card shadow-sm mb-4">
+            <div class="card-body text-center">
+                <h5 class="card-title">Votre Réponse (RSVP)</h5>
+                <p>Statut actuel : <strong class="text-primary">{{ my_invitation.status|capitalize }}</strong></p>
+                <div class="btn-group" role="group">
+                    <a href="{{ path('invitation_rsvp', {id: my_invitation.id, status: 'accepted'}) }}" class="btn btn-success"><i class="bi bi-check-circle"></i> Participe</a>
+                    <a href="{{ path('invitation_rsvp', {id: my_invitation.id, status: 'maybe'}) }}" class="btn btn-warning"><i class="bi bi-question-circle"></i> Peut-être</a>
+                    <a href="{{ path('invitation_rsvp', {id: my_invitation.id, status: 'declined'}) }}" class="btn btn-danger"><i class="bi bi-x-circle"></i> Ne participe pas</a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {# Management Card for Organizer #}
+    {% if app.user == event.organizer %}
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h5 class="mb-0">Panel de l'Organisateur</h5>
+            </div>
+            <div class="card-body">
+                <h6><i class="bi bi-person-plus-fill"></i> Inviter des participants</h6>
+                <form action="{{ path('event_invite', {id: event.id}) }}" method="post" class="input-group mb-3">
+                    <input type="email" name="email" class="form-control" placeholder="Adresse email de l'invité" required>
+                    <button class="btn btn-primary" type="submit">Envoyer l'invitation</button>
+                </form>
+
+                <h6><i class="bi bi-people-fill"></i> Liste des invités</h6>
+                <ul class="list-group">
+                    {% for invitation in event.invitations %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ invitation.guestEmail }}
+                            <span class="badge 
+                                {% if invitation.status == 'accepted' %}bg-success
+                                {% elseif invitation.status == 'declined' %}bg-danger
+                                {% elseif invitation.status == 'maybe' %}bg-warning
+                                {% else %}bg-secondary{% endif %}">
+                                {{ invitation.status|capitalize }}
+                            </span>
+                        </li>
+                    {% else %}
+                        <li class="list-group-item">Aucun invité pour le moment.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endif %}
+
+{% endblock %}

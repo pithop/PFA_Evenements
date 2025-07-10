@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Tableau de Bord{% endblock %}
+
+{% block body %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Tableau de Bord</h1>
+        <a href="{{ path('event_new') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle-fill me-2"></i>Créer un événement
+        </a>
+    </div>
+
+    {# Section for Admin #}
+    {% if is_granted('ROLE_ADMIN') %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle-fill"></i>
+            Vous êtes connecté en tant qu'administrateur. <a href="{{ path('app_admin') }}">Accéder au panel admin</a>.
+        </div>
+    {% endif %}
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Mes Événements (Organisateur)</h5>
+        </div>
+        <div class="list-group list-group-flush">
+            {% if organizedEvents %}
+                {% for event in organizedEvents %}
+                    <a href="{{ path('event_show', {id: event.id}) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ event.title }}</strong><br>
+                            <small class="text-muted">{{ event.startDate|date('d F Y à H:i') }}</small>
+                        </div>
+                        <span class="badge bg-primary rounded-pill">{{ event.invitations|length }} invités</span>
+                    </a>
+                {% endfor %}
+            {% else %}
+                <div class="list-group-item">Vous n'avez organisé aucun événement.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h5 class="mb-0">Mes Invitations</h5>
+        </div>
+        <div class="list-group list-group-flush">
+            {% if invitations %}
+                {% for invitation in invitations %}
+                    <a href="{{ path('event_show', {id: invitation.event.id}) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ invitation.event.title }}</strong><br>
+                            <small class="text-muted">Organisé par : {{ invitation.event.organizer.firstName }}</small>
+                        </div>
+                        <span class="badge 
+                            {% if invitation.status == 'accepted' %}bg-success
+                            {% elseif invitation.status == 'declined' %}bg-danger
+                            {% elseif invitation.status == 'maybe' %}bg-warning
+                            {% else %}bg-secondary{% endif %}">
+                            {{ invitation.status|capitalize }}
+                        </span>
+                    </a>
+                {% endfor %}
+            {% else %}
+                <div class="list-group-item">Vous n'avez reçu aucune invitation.</div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

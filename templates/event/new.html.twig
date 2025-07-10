@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer un nouvel événement{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h3 class="mb-0">Créer un nouvel événement</h3>
+            </div>
+            <div class="card-body">
+                {{ form_start(eventForm) }}
+                {{ form_widget(eventForm) }}
+                <button class="btn btn-primary w-100 mt-3" type="submit">Enregistrer l'événement</button>
+                {{ form_end(eventForm) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

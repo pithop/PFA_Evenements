@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Panel Administrateur{% endblock %}
+
+{% block body %}
+    <h1><i class="bi bi-shield-lock-fill"></i> Panel Administrateur</h1>
+    <p class="lead">Vue globale de l'activité de la plateforme.</p>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card text-center text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h1 class="card-title">{{ userCount }}</h1>
+                    <p class="card-text">Utilisateurs Inscrits</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card text-center text-white bg-success mb-3">
+                <div class="card-body">
+                    <h1 class="card-title">{{ eventCount }}</h1>
+                    <p class="card-text">Événements Créés</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

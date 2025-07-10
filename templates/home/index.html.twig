@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bienvenue !{% endblock %}
+
+{% block body %}
+<div class="container text-center mt-5">
+    <div class="jumbotron">
+        <h1 class="display-4">🎉 Bienvenue sur EventPlanner !</h1>
+        <p class="lead">Votre solution tout-en-un pour planifier et gérer vos événements simplement.</p>
+        <hr class="my-4">
+        <p>Connectez-vous pour gérer vos événements ou inscrivez-vous pour commencer.</p>
+        <p class="lead">
+            <a class="btn btn-primary btn-lg" href="{{ path('app_login') }}" role="button">
+                <i class="bi bi-box-arrow-in-right"></i> Connexion
+            </a>
+            <a class="btn btn-success btn-lg" href="{{ path('app_register') }}" role="button">
+                <i class="bi bi-person-plus-fill"></i> Inscription
+            </a>
+        </p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow">
+            <div class="card-body p-4">
+                <form method="post">
+                    <h1 class="h3 mb-3 fw-normal text-center">Connexion</h1>
+
+                    {% if error %}
+                        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                    {% endif %}
+
+                    <div class="form-floating mb-3">
+                        {# THIS IS THE FIX: The name attribute is now "_username" #}
+                        <input type="email" value="{{ last_username }}" name="_username" id="inputEmail" class="form-control" autocomplete="email" required autofocus>
+                        <label for="inputEmail">Email</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        {# The password field name is "_password" by default #}
+                        <input type="password" name="_password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+                        <label for="inputPassword">Mot de passe</label>
+                    </div>
+
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                    <button class="w-100 btn btn-lg btn-primary" type="submit">
+                        <i class="bi bi-box-arrow-in-right"></i> Se connecter
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
