@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Entity\Task;
+use App\Repository\TaskRepository;
 
 #[IsGranted('ROLE_USER')] // Protect all routes in this controller
 class EventController extends AbstractController
@@ -81,5 +83,40 @@ class EventController extends AbstractController
         }
 
         return $this->redirectToRoute('event_show', ['id' => $invitation->getEvent()->getId()]);
+    }
+    #[Route('/event/{id}/add-task', name: 'event_add_task', methods: ['POST'])]
+    public function addTask(Event $event, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        // Sécurité : seul l'organisateur peut ajouter une tâche
+        if ($this->getUser() !== $event->getOrganizer()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $taskName = $request->request->get('task_name');
+        if ($taskName) {
+            $task = new Task();
+            $task->setEvent($event);
+            $task->setName($taskName);
+            $task->setIsDone(false);
+            $entityManager->persist($task);
+            $entityManager->flush();
+            $this->addFlash('success', 'Tâche ajoutée avec succès.');
+        }
+
+        return $this->redirectToRoute('event_show', ['id' => $event->getId()]);
+    }
+
+    #[Route('/task/{id}/toggle', name: 'task_toggle')]
+    public function toggleTaskStatus(Task $task, EntityManagerInterface $entityManager): Response
+    {
+        // Sécurité : seul l'organisateur peut modifier une tâche de son événement
+        if ($this->getUser() !== $task->getEvent()->getOrganizer()) {
+            throw $this->createAccessDeniedException();
+        }
+        
+        $task->setIsDone(!$task->isIsDone());
+        $entityManager->flush();
+
+        return $this->redirectToRoute('event_show', ['id' => $task->getEvent()->getId()]);
     }
 }

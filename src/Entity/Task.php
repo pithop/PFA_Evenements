@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Entity;
 
 use App\Repository\TaskRepository;
@@ -14,7 +15,7 @@ class Task
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
-    
+
     #[ORM\Column]
     private ?bool $isDone = false;
 
@@ -22,5 +23,41 @@ class Task
     #[ORM\JoinColumn(nullable: false)]
     private ?Event $event = null;
 
-    // ... AJOUTEZ TOUS LES GETTERS ET SETTERS ICI ...
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    public function isIsDone(): ?bool
+    {
+        return $this->isDone;
+    }
+
+    public function setIsDone(bool $isDone): static
+    {
+        $this->isDone = $isDone;
+        return $this;
+    }
+
+    public function getEvent(): ?Event
+    {
+        return $this->event;
+    }
+
+    public function setEvent(?Event $event): static
+    {
+        $this->event = $event;
+        return $this;
+    }
 }

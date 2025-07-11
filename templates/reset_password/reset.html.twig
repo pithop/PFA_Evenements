@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+{% block title %}Réinitialiser le mot de passe{% endblock %}
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="h3 mb-3">Réinitialiser votre mot de passe</h1>
+                <form method="post">
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Nouveau mot de passe</label>
+                        <input type="password" name="password" id="password" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Réinitialiser</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

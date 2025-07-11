@@ -19,13 +19,14 @@ security:
             form_login:
                 login_path: app_login
                 check_path: app_login
-                # No 'username_parameter' needed, we are using the default "_username"
-            
             logout:
                 path: app_logout
                 target: app_home
 
+    # The order of these rules is CRITICAL.
     access_control:
-        - { path: ^/login, roles: PUBLIC_ACCESS }
-        - { path: ^/register, roles: PUBLIC_ACCESS }
+        # This is the fix: We've added reset-password to the list of public pages.
+        - { path: ^/(login|register|forgot-password|reset-password), roles: PUBLIC_ACCESS }
+        
+        # All other pages require a user to be logged in.
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
