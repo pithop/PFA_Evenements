@@ -26,6 +26,7 @@ security:
     # The order of these rules is CRITICAL.
     access_control:
         # This is the fix: We've added reset-password to the list of public pages.
+        - { path: ^/$, roles: PUBLIC_ACCESS }
         - { path: ^/(login|register|forgot-password|reset-password), roles: PUBLIC_ACCESS }
         
         # All other pages require a user to be logged in.

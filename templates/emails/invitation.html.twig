@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: sans-serif; color: #333; }
+        .container { padding: 20px; border: 1px solid #ddd; border-radius: 5px; max-width: 600px; margin: auto; }
+        h1 { color: #0d6efd; }
+        .button { background-color: #0d6efd; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Invitation à un Événement</h1>
+        <p>Bonjour,</p>
+        <p>
+            Vous avez été invité par <strong>{{ event.organizer.firstName }} {{ event.organizer.lastName }}</strong> à l'événement suivant :
+        </p>
+        <h2 style="color: #333;">{{ event.title }}</h2>
+        <p>
+            <strong>Date :</strong> {{ event.startDate|date('d F Y à H:i') }}<br>
+            <strong>Lieu :</strong> {{ event.location }}
+        </p>
+        <p>
+            Pour consulter les détails de l'événement et donner votre réponse, veuillez cliquer sur le lien ci-dessous :
+        </p>
+        <p style="text-align: center; margin: 20px 0;">
+            <a href="{{ event_url }}" class="button">
+                Voir l'événement et répondre
+            </a>
+        </p>
+        <p>
+            Nous espérons vous y voir !
+        </p>
+    </div>
+</body>
+</html>

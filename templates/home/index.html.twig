@@ -1,22 +1,21 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Bienvenue !{% endblock %}
+{% block title %}Bienvenue sur EventPlanner !{% endblock %}
 
 {% block body %}
-<div class="container text-center mt-5">
-    <div class="jumbotron">
-        <h1 class="display-4">🎉 Bienvenue sur EventPlanner !</h1>
-        <p class="lead">Votre solution tout-en-un pour planifier et gérer vos événements simplement.</p>
-        <hr class="my-4">
-        <p>Connectez-vous pour gérer vos événements ou inscrivez-vous pour commencer.</p>
-        <p class="lead">
-            <a class="btn btn-primary btn-lg" href="{{ path('app_login') }}" role="button">
-                <i class="bi bi-box-arrow-in-right"></i> Connexion
-            </a>
-            <a class="btn btn-success btn-lg" href="{{ path('app_register') }}" role="button">
-                <i class="bi bi-person-plus-fill"></i> Inscription
-            </a>
-        </p>
+<div class="container col-xxl-8 px-4 py-5">
+    <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+        <div class="col-10 col-sm-8 col-lg-6">
+            <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=2070&auto=format&fit=crop" class="d-block mx-lg-auto img-fluid rounded shadow-lg" alt="Personnes à une fête" width="700" height="500" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/700x500/6c757d/ffffff?text=EventPlanner';">
+        </div>
+        <div class="col-lg-6">
+            <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">Organisez vos événements, sans effort.</h1>
+            <p class="lead">Centralisez vos invitations, suivez les réponses en temps réel et gérez vos préparatifs en un seul endroit. Fini les tableurs et les emails dispersés.</p>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                <a href="{{ path('app_register') }}" type="button" class="btn btn-primary btn-lg px-4 me-md-2">Commencer Gratuitement</a>
+                <a href="{{ path('app_login') }}" type="button" class="btn btn-outline-secondary btn-lg px-4">Se connecter</a>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

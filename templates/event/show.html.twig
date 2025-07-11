@@ -5,7 +5,7 @@
 {% block body %}
     <div class="row">
         <div class="col-md-8">
-            {# Carte des détails de l'événement #}
+            {# --- Carte des détails de l'événement --- #}
             <div class="card shadow-sm mb-4">
                 <div class="card-body">
                     <h1 class="card-title">{{ event.title }}</h1>
@@ -19,7 +19,7 @@
                 </div>
             </div>
 
-            {# Carte de gestion pour l'organisateur #}
+            {# --- Carte de gestion pour l'organisateur --- #}
             {% if app.user == event.getOrganizer() %}
                 <div class="card shadow-sm">
                     <div class="card-header">
@@ -54,7 +54,7 @@
         </div>
 
         <div class="col-md-4">
-            {# Carte RSVP pour les invités #}
+            {# --- Carte RSVP pour les invités --- #}
             {% set my_invitation = event.invitations|filter(i => app.user and i.guestEmail == app.user.email)|first %}
             {% if my_invitation %}
                 <div class="card shadow-sm mb-4">
@@ -70,7 +70,7 @@
                 </div>
             {% endif %}
 
-            {# Carte des invités (pour l'organisateur) #}
+            {# --- Carte des invités (pour l'organisateur) --- #}
             {% if app.user == event.getOrganizer() %}
                 <div class="card shadow-sm">
                     <div class="card-header">
@@ -81,6 +81,28 @@
                             <input type="email" name="email" class="form-control" placeholder="email de l'invité" required>
                             <button class="btn btn-primary" type="submit"><i class="bi bi-send"></i></button>
                         </form>
+                        
+                        {# --- NOUVEAU BLOC DE STATISTIQUES --- #}
+                        {% set accepted = event.invitations|filter(i => i.status == 'accepted')|length %}
+                        {% set declined = event.invitations|filter(i => i.status == 'declined')|length %}
+                        {% set pending = event.invitations|filter(i => i.status in ['sent', 'maybe'])|length %}
+
+                        <div class="d-flex justify-content-around mb-3 text-center">
+                            <div>
+                                <span class="badge bg-success rounded-pill fs-6">{{ accepted }}</span><br>
+                                <small>Acceptés</small>
+                            </div>
+                            <div>
+                                <span class="badge bg-danger rounded-pill fs-6">{{ declined }}</span><br>
+                                <small>Refusés</small>
+                            </div>
+                            <div>
+                                <span class="badge bg-warning text-dark rounded-pill fs-6">{{ pending }}</span><br>
+                                <small>En attente</small>
+                            </div>
+                        </div>
+                        {# --- FIN DU NOUVEAU BLOC --- #}
+
                         <ul class="list-group">
                             {% for invitation in event.invitations %}
                                 <li class="list-group-item d-flex justify-content-between align-items-center">

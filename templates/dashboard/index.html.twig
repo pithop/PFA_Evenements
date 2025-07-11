@@ -10,7 +10,6 @@
         </a>
     </div>
 
-    {# Section for Admin #}
     {% if is_granted('ROLE_ADMIN') %}
         <div class="alert alert-info">
             <i class="bi bi-info-circle-fill"></i>
@@ -34,7 +33,12 @@
                     </a>
                 {% endfor %}
             {% else %}
-                <div class="list-group-item">Vous n'avez organisé aucun événement.</div>
+                <div class="list-group-item text-center p-4">
+                    <p class="mb-2">Vous n'avez encore créé aucun événement.</p>
+                    <a href="{{ path('event_new') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle-fill me-2"></i>Créer mon premier événement
+                    </a>
+                </div>
             {% endif %}
         </div>
     </div>
@@ -61,7 +65,10 @@
                     </a>
                 {% endfor %}
             {% else %}
-                <div class="list-group-item">Vous n'avez reçu aucune invitation.</div>
+                <div class="list-group-item text-center p-4">
+                    <i class="bi bi-envelope-open fs-1 text-muted"></i>
+                    <p class="mt-2">Vous n'avez reçu aucune invitation pour le moment.</p>
+                </div>
             {% endif %}
         </div>
     </div>

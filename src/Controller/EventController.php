@@ -4,17 +4,19 @@ namespace App\Controller;
 
 use App\Entity\Event;
 use App\Entity\Invitation;
+use App\Entity\Task;
 use App\Form\EventType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use App\Entity\Task;
-use App\Repository\TaskRepository;
 
-#[IsGranted('ROLE_USER')] // Protect all routes in this controller
+#[IsGranted('ROLE_USER')] // Protège toutes les routes de ce contrôleur
 class EventController extends AbstractController
 {
     #[Route('/event/new', name: 'event_new')]
@@ -47,31 +49,46 @@ class EventController extends AbstractController
     }
 
     #[Route('/event/{id}/invite', name: 'event_invite', methods: ['POST'])]
-    public function invite(Event $event, Request $request, EntityManagerInterface $entityManager): Response
+    public function invite(Event $event, Request $request, EntityManagerInterface $entityManager, MailerInterface $mailer): Response
     {
-        // Security check
         if ($this->getUser() !== $event->getOrganizer()) {
             throw $this->createAccessDeniedException();
         }
 
-        $email = $request->request->get('email');
-        if ($email) {
+        $emailAddress = $request->request->get('email');
+        if ($emailAddress) {
             $invitation = new Invitation();
             $invitation->setEvent($event);
-            $invitation->setGuestEmail($email);
+            $invitation->setGuestEmail($emailAddress);
             $invitation->setStatus('sent');
             $entityManager->persist($invitation);
             $entityManager->flush();
-            $this->addFlash('success', "Invitation envoyée à $email.");
+            $this->addFlash('success', "Invitation envoyée à $emailAddress.");
+
+            // --- Logique d'envoi d'email ---
+            $eventUrl = $this->generateUrl('event_show', ['id' => $event->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+            $email = (new Email())
+                ->from('invite@eventplanner.com')
+                ->to($emailAddress)
+                ->subject('Vous êtes invité à l\'événement : ' . $event->getTitle())
+                ->html($this->renderView('emails/invitation.html.twig', [
+                    'event' => $event,
+                    'event_url' => $eventUrl
+                ]));
+
+            try {
+                $mailer->send($email);
+            } catch (\Exception $e) {
+                $this->addFlash('warning', 'L\'invitation a été enregistrée, mais l\'email n\'a pas pu être envoyé.');
+            }
         }
 
         return $this->redirectToRoute('event_show', ['id' => $event->getId()]);
     }
 
     #[Route('/invitation/{id}/{status}', name: 'invitation_rsvp')]
-    public function rsvp(Invitation $invitation, string $status, EntityManagerInterface $entityManager): Response
+    public function rsvp(Invitation $invitation, string $status, EntityManagerInterface $entityManager, MailerInterface $mailer): Response
     {
-        // Security check
         if ($this->getUser()->getUserIdentifier() !== $invitation->getGuestEmail()) {
             throw $this->createAccessDeniedException();
         }
@@ -80,14 +97,34 @@ class EventController extends AbstractController
             $invitation->setStatus($status);
             $entityManager->flush();
             $this->addFlash('success', 'Votre réponse a bien été prise en compte.');
+
+            // --- Logique d'envoi de notification à l'organisateur ---
+            $organizer = $invitation->getEvent()->getOrganizer();
+            $event = $invitation->getEvent();
+            $email = (new Email())
+                ->from('notifications@eventplanner.com')
+                ->to($organizer->getEmail())
+                ->subject('Nouvelle réponse pour votre événement : ' . $event->getTitle())
+                ->html(sprintf(
+                    '<p>%s a répondu "%s" à votre invitation pour l\'événement "%s".</p>',
+                    $this->getUser()->getFirstName(),
+                    $status,
+                    $event->getTitle()
+                ));
+            
+            try {
+                $mailer->send($email);
+            } catch (\Exception $e) {
+                // Ne pas bloquer l'utilisateur si l'email ne part pas
+            }
         }
 
         return $this->redirectToRoute('event_show', ['id' => $invitation->getEvent()->getId()]);
     }
+
     #[Route('/event/{id}/add-task', name: 'event_add_task', methods: ['POST'])]
     public function addTask(Event $event, Request $request, EntityManagerInterface $entityManager): Response
     {
-        // Sécurité : seul l'organisateur peut ajouter une tâche
         if ($this->getUser() !== $event->getOrganizer()) {
             throw $this->createAccessDeniedException();
         }
@@ -109,7 +146,6 @@ class EventController extends AbstractController
     #[Route('/task/{id}/toggle', name: 'task_toggle')]
     public function toggleTaskStatus(Task $task, EntityManagerInterface $entityManager): Response
     {
-        // Sécurité : seul l'organisateur peut modifier une tâche de son événement
         if ($this->getUser() !== $task->getEvent()->getOrganizer()) {
             throw $this->createAccessDeniedException();
         }
