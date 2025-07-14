@@ -1,0 +1,18 @@
+/* assets/styles/app.css */
+body {
+    background: linear-gradient(to top, #f8f9fa, #ffffff);
+    min-height: 100vh;
+}
+
+.card, .btn {
+    transition: all 0.3s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,.15)!important;
+}
+
+.event-card {
+    border-left: 4px solid var(--bs-primary);
+}
